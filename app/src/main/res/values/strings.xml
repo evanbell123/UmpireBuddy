@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Umpire Buddy</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="strike_btn">Strike</string>
+    <string name="ball_btn">Ball</string>
+    <string name="ball_lbl">Ball:</string>
+    <string name="strike_lbl">Strike:</string>
+    <string name="ball_cnt">0</string>
+    <string name="strike_cnt">0</string>
+</resources>
