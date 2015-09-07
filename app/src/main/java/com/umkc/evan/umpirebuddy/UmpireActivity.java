@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class UmpireActivity extends AppCompatActivity {
@@ -26,6 +30,50 @@ public class UmpireActivity extends AppCompatActivity {
     private String outMessage = "Out!";
     private String walkMessage = "Walk!";
 
+    private ActionMode mActionMode;
+
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+        // Called when the action mode is created; startActionMode() was called
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // Inflate a menu resource providing context menu items
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.context_menu, menu);
+            return true;
+        }
+
+        // Called each time the action mode is shown. Always called after onCreateActionMode, but
+        // may be called multiple times if the mode is invalidated.
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false; // Return false if nothing is done
+        }
+
+        // Called when the user selects a contextual menu item
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.contextStrike:
+                    strikeEvent();
+                    mode.finish(); // Action picked, so close the Contextual Action Bar(CAB)
+                    return true;
+                case R.id.contextBall:
+                    ballEvent();
+                    mode.finish(); // Action picked, so close the CAB
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // Called when the user exits the action mode
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,11 +84,7 @@ public class UmpireActivity extends AppCompatActivity {
         mStrikeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                strikeCount++;
-                updateStrikeCount();
-                if (strikeCount == 3) {
-                    resetAll(outMessage);
-                }
+                strikeEvent();
             }
         });
 
@@ -48,13 +92,42 @@ public class UmpireActivity extends AppCompatActivity {
         mBallBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ballCount++;
-                updateBallCount();
-                if (ballCount == 4) {
-                    resetAll(walkMessage);
-                }
+                ballEvent();
             }
         });
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.relative_layout);
+        layout.setOnLongClickListener(new View.OnLongClickListener() {
+            // Called when the user long-clicks on someView
+            public boolean onLongClick(View view) {
+                // mActionMode is set back to null
+                //    above when the context menu disappears.
+                if (mActionMode != null) {
+                    return false;
+                }
+
+                // Start the CAB using the ActionMode.Callback defined above
+                mActionMode = startActionMode(mActionModeCallback);
+                view.setSelected(true);
+                return true;
+            }
+        });
+    }
+
+    private void strikeEvent() {
+        strikeCount++;
+        updateStrikeCount();
+        if (strikeCount == 3) {
+            resetAll(outMessage);
+        }
+    }
+
+    private void ballEvent() {
+        ballCount++;
+        updateBallCount();
+        if (ballCount == 4) {
+            resetAll(walkMessage);
+        }
     }
 
     private void updateStrikeCount() {
