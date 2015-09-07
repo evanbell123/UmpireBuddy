@@ -5,6 +5,6 @@
         android:title="Reset"
         android:icon="@drawable/ic_action_refresh"
         app:showAsAction="withText|ifRoom" />
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+    <item android:id="@+id/about" android:title="@string/title_activity_about"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

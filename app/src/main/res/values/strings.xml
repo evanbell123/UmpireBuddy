@@ -10,5 +10,5 @@
     <string name="ball_cnt">0</string>
     <string name="strike_cnt">0</string>
     <string name="title_activity_about">About</string>
-    <string name="about_text">Count Much More by Evan Bell</string>
+    <string name="about_text">Umpire Buddy by Evan Bell</string>
 </resources>

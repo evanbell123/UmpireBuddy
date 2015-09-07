@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +13,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class UmpireActivity extends AppCompatActivity {
+
+    public final static String EXTRA_DATA = "com.umkc.evan.umpirebuddy.ABOUTDATA";
+    private final static String TAG = "Umpire Buddy";
 
     private Button mStrikeBtn;
     private Button mBallBtn;
@@ -25,6 +29,7 @@ public class UmpireActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "Starting onCreate...");
         setContentView(R.layout.activity_umpire);
 
         mStrikeBtn = (Button) findViewById(R.id.strike_btn);
@@ -101,13 +106,11 @@ public class UmpireActivity extends AppCompatActivity {
             case R.id.reset:
                 resetCounts();
                 return true;
-            /*
             case R.id.about:
                 Intent intent = new Intent(this, AboutActivity.class);
                 intent.putExtra(EXTRA_DATA, "extra data or parameter you want to pass to activity");
                 startActivity(intent);
                 return true;
-                */
             default:
                 return super.onOptionsItemSelected(item);
         }
