@@ -1,8 +1,10 @@
 package com.umkc.evan.umpirebuddy;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,21 +22,22 @@ public class UmpireActivity extends AppCompatActivity {
 
     public final static String EXTRA_DATA = "com.umkc.evan.umpirebuddy.ABOUTDATA";
     private final static String TAG = "Umpire Buddy";
+    private static final String PREFS_NAME = "PrefsFile";
 
     private Button mStrikeBtn;
     private Button mBallBtn;
 
     private int strikeCount = 0;
     private int ballCount = 0;
+    private int totalOutsCount = 0;
 
     private String outMessage = "Out!";
     private String walkMessage = "Walk!";
 
-    private ActionMode mActionMode;
+    private ActionMode mActionMode; //context menu
 
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
-        // Called when the action mode is created; startActionMode() was called
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // Inflate a menu resource providing context menu items
@@ -43,8 +46,6 @@ public class UmpireActivity extends AppCompatActivity {
             return true;
         }
 
-        // Called each time the action mode is shown. Always called after onCreateActionMode, but
-        // may be called multiple times if the mode is invalidated.
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             return false; // Return false if nothing is done
@@ -56,11 +57,11 @@ public class UmpireActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.contextStrike:
                     strikeEvent();
-                    mode.finish(); // Action picked, so close the Contextual Action Bar(CAB)
+                    mode.finish();
                     return true;
                 case R.id.contextBall:
                     ballEvent();
-                    mode.finish(); // Action picked, so close the CAB
+                    mode.finish();
                     return true;
                 default:
                     return false;
@@ -80,11 +81,19 @@ public class UmpireActivity extends AppCompatActivity {
         Log.i(TAG, "Starting onCreate...");
         setContentView(R.layout.activity_umpire);
 
+        // Get saved total outs count
+        SharedPreferences sp = getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+        totalOutsCount = sp.getInt("totalOutsCount", -1);
+        updateTotalOutsCount();
+
+        // get saved totalOuts, strikeCount, and ballCount form persistent storage
         if (savedInstanceState != null) {
             strikeCount = savedInstanceState.getInt("strikeCount");
             ballCount = savedInstanceState.getInt("ballCount");
+            totalOutsCount = savedInstanceState.getInt("totalOutsCount");
             updateStrikeCount();
             updateBallCount();
+            updateTotalOutsCount();
         }
 
         mStrikeBtn = (Button) findViewById(R.id.strike_btn);
@@ -102,6 +111,7 @@ public class UmpireActivity extends AppCompatActivity {
                 ballEvent();
             }
         });
+
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.relative_layout);
         layout.setOnLongClickListener(new View.OnLongClickListener() {
@@ -125,6 +135,8 @@ public class UmpireActivity extends AppCompatActivity {
         strikeCount++;
         updateStrikeCount();
         if (strikeCount == 3) {
+            totalOutsCount++;
+            updateTotalOutsCount();
             resetAll(outMessage);
         }
     }
@@ -145,6 +157,11 @@ public class UmpireActivity extends AppCompatActivity {
     private void updateBallCount() {
         TextView t = (TextView)findViewById(R.id.ball_cnt_lbl);
         t.setText(Integer.toString(ballCount));
+    }
+
+    private void updateTotalOutsCount() {
+        TextView t = (TextView)findViewById(R.id.total_outs_cnt_lbl);
+        t.setText(Integer.toString(totalOutsCount));
     }
 
     private void resetCounts() {
@@ -176,9 +193,6 @@ public class UmpireActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
 
         switch ( item.getItemId()) {
             case R.id.action_settings:
@@ -218,6 +232,11 @@ public class UmpireActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "onPause()");
+        // save total outs count
+        SharedPreferences sp = getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt("totalOutsCount", totalOutsCount);
+        editor.commit();
     }
 
     @Override
@@ -239,6 +258,7 @@ public class UmpireActivity extends AppCompatActivity {
         Log.i(TAG, "onSaveInstanceState()");
         icicle.putInt("strikeCount", strikeCount);
         icicle.putInt("ballCount", ballCount);
+        icicle.putInt("totalOutsCount", totalOutsCount);
     }
 
     @Override

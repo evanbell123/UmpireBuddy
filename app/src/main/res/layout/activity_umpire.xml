@@ -70,4 +70,25 @@
         android:layout_alignLeft="@+id/ball_btn"
         android:layout_alignStart="@+id/ball_btn" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/total_outs_lbl"
+        android:id="@+id/total_outs_lbl"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/strike_btn"
+        android:layout_alignEnd="@+id/strike_btn"
+        android:layout_marginBottom="81dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/total_outs_cnt"
+        android:id="@+id/total_outs_cnt_lbl"
+        android:layout_alignTop="@+id/total_outs_lbl"
+        android:layout_alignLeft="@+id/ball_btn"
+        android:layout_alignStart="@+id/ball_btn" />
+
 </RelativeLayout>
